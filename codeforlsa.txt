@@ -1,0 +1,4 @@
+tm <- as.textmatrix(lsaSpace)
+kmeans(t(tm) , 3)$cluster
+
+set.seed(0)

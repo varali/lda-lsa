@@ -1,0 +1,34 @@
+ON the server
+
+#!/usr/bin/env Rscript
+
+put this at the top of files
+
+args <- commandArgs(TRUE)
+
+look up documentation on commandArgs
+
+args[1]
+
+LDA( control = list(seed = as.integer(args[1]) ) )
+
+
+
+print log likelihood before saving
+
+save(lda, file = sprintf(“results_%s.Rdata”, args[1]))
+
+How to do it in serial
+for ((x = 1; x<= 100; x++)); do
+	./myscript.r $x > results_$x.log
+done
+
+parallelize.bash 64 < myjobs.txt
+
+for ((x = 1; x<= 100; x++)); do
+	echo “./myscript.r $x > results_$x.log”
+done > myjobs.txt
+
+
+make sure to use print when printing variables
+
