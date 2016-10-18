@@ -9,6 +9,7 @@
 library(tm)
 library(ggplot2)
 library(lsa)
+library(xlsx)
 
 # Example sentences
 # !These are not used in the final analysis!
@@ -25,7 +26,7 @@ text <- c("transporting food by cars will cause global warming. so we should go 
 text
 
 # Read in documents from text.csv
-setwd("/Users/cody/Documents/rfiles")
+setwd("/Users/crn2k/Documents/lda-lsa")
 #testtext <- apply(read.table("text.csv", header=FALSE, sep=","), 2, as.character)
 testtext <- apply(read.table("curatedafg_100_summary.csv", header=FALSE, sep=","), 2, as.character)
 testtext
@@ -86,3 +87,5 @@ k <- 5
 # Split documents into topics and display in two rows
 kmeans(t(tm), k, nstart = 10)$cluster
     
+# Write results to file
+write.xlsx(kmeans(t(tm), k, nstart = 10)$cluster, "/Users/crn2k/Documents/thesis-results/lsaresults_curatedafg_100_5.xlsx")
