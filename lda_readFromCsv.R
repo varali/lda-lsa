@@ -12,10 +12,10 @@ library(ggplot2)
 
 # Read in documents from text.csv
 #testdata <- apply(read.table("/Users/cody/Documents/text.csv", header=FALSE, sep=","), 2, as.character)
-testdata <- apply(read.table("/Users/cody/Documents/rfiles/curatedafg_100_summary.csv", header=FALSE, sep=","), 2, as.character)
+testdata <- apply(read.table("/Users/cody/Documents/lda-lsa/curatedafg_100_summary.csv", header=FALSE, sep=","), 2, as.character)
 testdata <- unname(testdata)
 
-view <- factor(rep(c("topic 1", "topic 2", "topic 3"), each = 3))
+view <- factor(rep(c("topic 1", "topic 2", "topic 3", "topic 4"), each = 25))
 df <- data.frame(testdata, view, stringsAsFactors = FALSE)
 df
 
@@ -24,8 +24,8 @@ testmatrix <- create_matrix(testdata, language="english", removeNumbers=TRUE, st
 testmatrix
 
 
-# perform lda with 3 topics and 10 starts
-k <- 3
+# perform lda with 4 topics and 10 starts
+k <- 5
 lda <- LDA(testmatrix, k, control = list(seed = seq(1, 10), nstart = 10)) 
 str(lda)
 
@@ -34,9 +34,34 @@ terms(lda)
 str(topics(lda))
 
 # Split documents into topics and list in two rows
-topics(lda)
+data.lda <- topics(lda)
+data.lda
+
+data.sorted <- sort(data.lda)
+data.sorted
+
+data.res <- cluster.sort(data.sorted)
+data.res
 
 library(xlsx)
-write.xlsx(topics(lda), "/Users/cody/Documents/Thesis/ldaresults_curatedafg_100_2.xlsx")
+write.xlsx(data.lda, file = "/Users/cody/Documents/lda-lsa/ldaresults_curatedafg_100_5.xlsx")
 
+preselected_topics <- read.xlsx("/Users/cody/Documents/lda-lsa/preselected_topics.xlsx", sheetIndex = 1, header = FALSE)
+preselected_topics 
 
+assn.sorted <- sort(preselected_topics$X1)
+assn.sorted
+
+assn.perm <- sort(preselected_topics$X1, index.return=TRUE)$ix
+assn.perm
+
+lda.sorted <- cluster.sort(data.lda[assn.perm])
+lda.sorted
+
+write.xlsx(lda.sorted, file = "/Users/cody/Documents/lda-lsa/ldaresults_sorted_curatedafg_100_1.xlsx")
+
+median(which(lda.sorted == 1))
+median(which(lda.sorted == 2))
+median(which(lda.sorted == 3))
+median(which(lda.sorted == 4))
+median(which(lda.sorted == 5))

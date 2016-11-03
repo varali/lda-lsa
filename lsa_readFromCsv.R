@@ -10,6 +10,20 @@ library(tm)
 library(ggplot2)
 library(lsa)
 
+# jphillips
+cluster.sort <- function(data,f=median) {
+  s <- seq(range(data)[1], range(data)[2])
+  x <- rep(0,length(s))
+  l <- list()
+  for (i in 1:length(s)) {
+    l[[i]] <- which(data == s[i])
+    x[i] <- f(l[[i]])
+  }
+  ix <- sort(x, index.return=TRUE)$ix
+  for (i in 1:length(s)) data[l[[ix[i]]]] <- i
+  return (data)
+}
+
 # Example sentences
 # !These are not used in the final analysis!
 text <- c("transporting food by cars will cause global warming. so we should go local.",
@@ -25,7 +39,7 @@ text <- c("transporting food by cars will cause global warming. so we should go 
 text
 
 # Read in documents from text.csv
-setwd("/Users/cody/Documents/rfiles")
+setwd("/Users/cody/Documents/lda-lsa")
 #testtext <- apply(read.table("text.csv", header=FALSE, sep=","), 2, as.character)
 testtext <- apply(read.table("curatedafg_100_summary.csv", header=FALSE, sep=","), 2, as.character)
 testtext
@@ -84,5 +98,38 @@ set.seed(0)
 k <- 5
 
 # Split documents into topics and display in two rows
-kmeans(t(tm), k, nstart = 10)$cluster
+data.kmeans <- kmeans(t(tm), k, nstart = 10)$cluster
+data.kmeans
+
+#data.ix <- sort(data.kmeans, index.return=TRUE)$ix
+#data.ix
+
+#data.ix.sort <- sort(data.kmeans[data.ix])
+#data.ix.sort
+
+#data.kmeans.clustered <- cluster.sort(sort(data.kmeans))
+#data.kmeans.clustered
+
+data.sorted <- sort(data.kmeans)
+data.sorted
+
+data.res <- cluster.sort(data.sorted)
+data.res
+
+library(xlsx)
+write.xlsx(data.kmeans, file = "/Users/cody/Documents/lda-lsa/lsaresults_curatedafg_100_5.xlsx")
     
+preselected_topics <- read.xlsx("/Users/cody/Documents/lda-lsa/preselected_topics.xlsx", sheetIndex = 1, header = FALSE)
+preselected_topics 
+
+assn.sorted <- sort(preselected_topics$X1)
+assn.sorted
+write.xlsx(assn.sorted, file = "/Users/cody/Documents/lda-lsa/preselected_topics_sorted.xlsx")
+
+assn.perm <- sort(preselected_topics$X1, index.return=TRUE)$ix
+assn.perm
+
+lsa.sorted <- cluster.sort(data.kmeans[assn.perm])
+lsa.sorted
+
+write.xlsx(lsa.sorted, file = "/Users/cody/Documents/lda-lsa/lsaresults_sorted_curatedafg_100_1.xlsx")
