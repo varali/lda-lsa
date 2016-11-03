@@ -9,6 +9,7 @@
 library(RTextTools)
 library(topicmodels)
 library(ggplot2)
+library(xlsx)
 
 # Read in documents from text.csv
 #testdata <- apply(read.table("/Users/cody/Documents/text.csv", header=FALSE, sep=","), 2, as.character)
@@ -24,7 +25,7 @@ testmatrix <- create_matrix(testdata, language="english", removeNumbers=TRUE, st
 testmatrix
 
 
-# perform lda with 4 topics and 10 starts
+# perform lda with 5 topics and 10 starts
 k <- 5
 lda <- LDA(testmatrix, k, control = list(seed = seq(1, 10), nstart = 10)) 
 str(lda)

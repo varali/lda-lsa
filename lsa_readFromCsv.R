@@ -9,6 +9,7 @@
 library(tm)
 library(ggplot2)
 library(lsa)
+library(xlsx)
 
 # jphillips
 cluster.sort <- function(data,f=median) {
@@ -27,18 +28,19 @@ cluster.sort <- function(data,f=median) {
 # Example sentences
 # !These are not used in the final analysis!
 text <- c("transporting food by cars will cause global warming. so we should go local.",
-    "we should try to convince our parents to stop using cars because it will cause global warming.",
-    "some food, such as mongo, requires a warm weather to grow. so they have to be transported to canada.",
-    "a typical electronic circuit can be built with a battery, a bulb, and a switch.",
-    "electricity flows from batteries to the bulb, just like water flows through a tube.",
-    "batteries have chemical energe in it. then electrons flow through a bulb to light it up.",
-    "birds can fly because they have feathers and they are light.", 
-    "why can some birds like pigeons fly while some others like chickens cannot?",
-    #"dogs bark")
-    "feathers are important for birds to fly. if the feathers on a bird's wings are removed, this bird cannot fly.")
+          "we should try to convince our parents to stop using cars because it will cause global warming.",
+          "some food, such as mongo, requires a warm weather to grow. so they have to be transported to canada.",
+          "a typical electronic circuit can be built with a battery, a bulb, and a switch.",
+          "electricity flows from batteries to the bulb, just like water flows through a tube.",
+          "batteries have chemical energe in it. then electrons flow through a bulb to light it up.",
+          "birds can fly because they have feathers and they are light.", 
+          "why can some birds like pigeons fly while some others like chickens cannot?",
+          #"dogs bark")
+          "feathers are important for birds to fly. if the feathers on a bird's wings are removed, this bird cannot fly.")
 text
 
 # Read in documents from text.csv
+<<<<<<< HEAD
 setwd("/Users/cody/Documents/lda-lsa")
 #testtext <- apply(read.table("text.csv", header=FALSE, sep=","), 2, as.character)
 testtext <- apply(read.table("curatedafg_100_summary.csv", header=FALSE, sep=","), 2, as.character)
@@ -47,7 +49,7 @@ testtext
 testtext <- unname(testtext)
 testtext
 
-   
+
 # for 4 topics, 12 rows
 #view <- factor(rep(c("topic 1", "topic 2", "topic 3", "topic 4"), each = 3))
 # for 3 topics, 9 rows
@@ -82,7 +84,7 @@ dist.mat.lsa # check distance matrix
 #fit <- cmdscale(dist.mat.lsa, eig = TRUE, k = 2)
 #points <- data.frame(x = fit$points[, 1], y = fit$points[, 2])
 #ggplot(points, aes(x = x, y = y)) + geom_point(data = points, aes(x = x, y = y, color = df$view)) + geom_text(data = points, aes(x = x, y = y - 0.2, label = row.names(df)))
-    
+
 
 # Get dimensions of td.mat
 dim(td.mat)
@@ -118,7 +120,7 @@ data.res
 
 library(xlsx)
 write.xlsx(data.kmeans, file = "/Users/cody/Documents/lda-lsa/lsaresults_curatedafg_100_5.xlsx")
-    
+
 preselected_topics <- read.xlsx("/Users/cody/Documents/lda-lsa/preselected_topics.xlsx", sheetIndex = 1, header = FALSE)
 preselected_topics 
 
