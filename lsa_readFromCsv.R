@@ -40,7 +40,6 @@ text <- c("transporting food by cars will cause global warming. so we should go 
 text
 
 # Read in documents from text.csv
-<<<<<<< HEAD
 setwd("/Users/cody/Documents/lda-lsa")
 #testtext <- apply(read.table("text.csv", header=FALSE, sep=","), 2, as.character)
 testtext <- apply(read.table("curatedafg_100_summary.csv", header=FALSE, sep=","), 2, as.character)
@@ -81,7 +80,8 @@ dist.mat.lsa # check distance matrix
 
 # This creates a space graph - we do not need this right now
 # MDS
-#fit <- cmdscale(dist.mat.lsa, eig = TRUE, k = 2)
+fit <- cmdscale(dist.mat.lsa, eig = TRUE, k = 5)
+#fit
 #points <- data.frame(x = fit$points[, 1], y = fit$points[, 2])
 #ggplot(points, aes(x = x, y = y)) + geom_point(data = points, aes(x = x, y = y, color = df$view)) + geom_text(data = points, aes(x = x, y = y - 0.2, label = row.names(df)))
 
@@ -100,23 +100,9 @@ set.seed(0)
 k <- 5
 
 # Split documents into topics and display in two rows
-data.kmeans <- kmeans(t(tm), k, nstart = 10)$cluster
+#data.kmeans <- kmeans(t(tm), k, nstart = 10)$cluster
+data.kmeans <- kmeans(fit$points, k, nstart = 10)$cluster
 data.kmeans
-
-#data.ix <- sort(data.kmeans, index.return=TRUE)$ix
-#data.ix
-
-#data.ix.sort <- sort(data.kmeans[data.ix])
-#data.ix.sort
-
-#data.kmeans.clustered <- cluster.sort(sort(data.kmeans))
-#data.kmeans.clustered
-
-data.sorted <- sort(data.kmeans)
-data.sorted
-
-data.res <- cluster.sort(data.sorted)
-data.res
 
 library(xlsx)
 write.xlsx(data.kmeans, file = "/Users/cody/Documents/lda-lsa/lsaresults_curatedafg_100_5.xlsx")

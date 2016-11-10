@@ -16,7 +16,7 @@ library(xlsx)
 testdata <- apply(read.table("/Users/cody/Documents/lda-lsa/curatedafg_100_summary.csv", header=FALSE, sep=","), 2, as.character)
 testdata <- unname(testdata)
 
-view <- factor(rep(c("topic 1", "topic 2", "topic 3", "topic 4"), each = 25))
+view <- factor(rep(c("topic 1", "topic 2", "topic 3", "topic 4", "topic 5"), each = 20))
 df <- data.frame(testdata, view, stringsAsFactors = FALSE)
 df
 
