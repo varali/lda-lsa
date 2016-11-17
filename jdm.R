@@ -1,11 +1,11 @@
 library(xlsx)
 library(fields)
 
-curated.data <- data.frame(read.xlsx("/Users/feignedpoet/Documents/lda-lsa/preselected_topics.xlsx", sheetIndex = 1, header = FALSE))
+curated.data <- data.frame(read.xlsx("/Users/cody/Documents/lda-lsa/preselected_topics.xlsx", sheetIndex = 1, header = FALSE))
 colnames(curated.data) <- c("curated")
 curated.data
 
-lda.data <- data.frame(read.xlsx("/Users/feignedpoet/Documents/lda-lsa/ldaresults_sorted_curatedafg_100_1.xlsx", sheetIndex = 1, header = TRUE))
+lda.data <- data.frame(read.xlsx("/Users/cody/Documents/lda-lsa/ldaresults_sorted_curatedafg_100_1.xlsx", sheetIndex = 1, header = TRUE))
 colnames(lda.data) <- c("topic", "lda")
 lda.data
 lda.data$topic <- as.numeric(as.character(lda.data$topic))
@@ -14,7 +14,7 @@ lda.data
 lda.data.sorted <- lda.data[order(lda.data$topic),]
 lda.data.sorted
 
-lsa.data <- data.frame(read.xlsx("/Users/feignedpoet/Documents/lda-lsa/lsaresults_sorted_curatedafg_100_1.xlsx", sheetIndex = 1, header = TRUE))
+lsa.data <- data.frame(read.xlsx("/Users/cody/Documents/lda-lsa/lsaresults_sorted_curatedafg_100_1.xlsx", sheetIndex = 1, header = TRUE))
 colnames(lsa.data) <- c("topic", "lsa")
 lsa.data$topic <- as.numeric(lsa.data$topic)
 lsa.data$lsa <- as.numeric(lsa.data$lsa)
@@ -39,7 +39,7 @@ for (i in 1:100) {
 
 for (i in 1:5) {
   for (j in 1:5) {
-    jdm.lda[i,j] = jdm.lda[i,j] / 100
+    jdm.lda[i,j] = jdm.lda[i, j] / 100
     jdm.lsa[i,j] = jdm.lsa[i, j] / 100
   }
 }
@@ -48,6 +48,9 @@ jdm.lda
 
 jdm.lsa
 
-#image.plot(t(jdm.lda), graphics.reset = TRUE)
-image.plot(jdm.lda, graphics.reset = TRUE)
+image.plot(t(jdm.lsa), graphics.reset = TRUE)
+#image.plot(jdm.lda, graphics.reset = TRUE)
+
+
+
 
