@@ -1,11 +1,16 @@
+# Written by Cody Crawford, 2016
+
+# Import library files
 library(xlsx)
 library(fields)
 
-curated.data <- data.frame(read.xlsx("/Users/cody/Documents/lda-lsa/preselected_topics.xlsx", sheetIndex = 1, header = FALSE))
+wd <- getwd()
+
+curated.data <- data.frame(read.xlsx(paste(wd, "/lda-lsa/preselected_topics.xlsx", sep=""), sheetIndex = 1, header = FALSE))
 colnames(curated.data) <- c("curated")
 curated.data
 
-lda.data <- data.frame(read.xlsx("/Users/cody/Documents/lda-lsa/ldaresults_sorted_curatedafg_100_1.xlsx", sheetIndex = 1, header = TRUE))
+lda.data <- data.frame(read.xlsx(paste(wd, "/lda-lsa/ldaresults_sorted_curatedafg_100.xlsx", sep=""), sheetIndex = 1, header = TRUE))
 colnames(lda.data) <- c("topic", "lda")
 lda.data
 lda.data$topic <- as.numeric(as.character(lda.data$topic))
@@ -14,7 +19,7 @@ lda.data
 lda.data.sorted <- lda.data[order(lda.data$topic),]
 lda.data.sorted
 
-lsa.data <- data.frame(read.xlsx("/Users/cody/Documents/lda-lsa/lsaresults_sorted_curatedafg_100_1.xlsx", sheetIndex = 1, header = TRUE))
+lsa.data <- data.frame(read.xlsx(paste(wd, "/lda-lsa/lsaresults_sorted_curatedafg_100.xlsx", sep=""), sheetIndex = 1, header = TRUE))
 colnames(lsa.data) <- c("topic", "lsa")
 lsa.data$topic <- as.numeric(lsa.data$topic)
 lsa.data$lsa <- as.numeric(lsa.data$lsa)
@@ -48,9 +53,16 @@ jdm.lda
 
 jdm.lsa
 
-image.plot(t(jdm.lsa), graphics.reset = TRUE)
+image.plot(t(jdm.lda), graphics.reset = TRUE)
 #image.plot(jdm.lda, graphics.reset = TRUE)
 
+# Calculate mutual information for LDA
+marginals.lda <- as.matrix(apply(jdm.lda, 1, sum)) %*% apply(jdm.lda, 2, sum) 
+sum(jdm.lda * log2(jdm.lda/marginals.lda), na.rm = TRUE)
+
+# Calculate mutual information for LSA
+marginals.lsa <- as.matrix(apply(jdm.lsa, 1, sum)) %*% apply(jdm.lsa, 2, sum) 
+sum(jdm.lsa * log2(jdm.lsa/marginals.lsa), na.rm = TRUE)
 
 
 
