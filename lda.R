@@ -8,6 +8,20 @@ library(topicmodels)
 library(ggplot2)
 library(xlsx)
 
+# jphillips 
+cluster.sort <- function(data,f=median) {
+  s <- seq(range(data)[1], range(data)[2])
+  x <- rep(0,length(s))
+  l <- list()
+  for (i in 1:length(s)) {
+    l[[i]] <- which(data == s[i])
+    x[i] <- f(l[[i]])
+  }
+  ix <- sort(x, index.return=TRUE)$ix
+  for (i in 1:length(s)) data[l[[ix[i]]]] <- i
+  return (data)
+}
+
 # Read in documents 
 wd <- getwd()
 testdata <- apply(read.table(paste(wd, "/lda-lsa/curatedafg_100_summary.csv", sep=""), header=FALSE, sep=","), 2, as.character)
@@ -22,7 +36,7 @@ testmatrix
 
 # perform lda with 5 topics and 10 starts
 k <- 5
-lda <- LDA(testmatrix, k, control = list(seed = seq(1, 10), nstart = 10)) 
+lda <- LDA(testmatrix, k, control = list(alpha = 50.0, seed = seq(1, 10), nstart = 10)) 
 str(lda)
 
 terms(lda)
