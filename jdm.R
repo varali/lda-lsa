@@ -6,11 +6,11 @@ library(fields)
 
 wd <- getwd()
 
-curated.data <- data.frame(read.xlsx(paste(wd, "/lda-lsa/preselected_topics.xlsx", sep=""), sheetIndex = 1, header = FALSE))
+curated.data <- data.frame(read.xlsx(paste(wd, "/Documents/lda-lsa/preselected_topics.xlsx", sep=""), sheetIndex = 1, header = FALSE))
 colnames(curated.data) <- c("curated")
 curated.data
 
-lda.data <- data.frame(read.xlsx(paste(wd, "/lda-lsa/ldaresults_sorted_curatedafg_100.xlsx", sep=""), sheetIndex = 1, header = TRUE))
+lda.data <- data.frame(read.xlsx(paste(wd, "/Documents/lda-lsa/ldaresults_sorted_curatedafg_100.xlsx", sep=""), sheetIndex = 1, header = TRUE))
 colnames(lda.data) <- c("topic", "lda")
 lda.data
 lda.data$topic <- as.numeric(as.character(lda.data$topic))
@@ -19,7 +19,7 @@ lda.data
 lda.data.sorted <- lda.data[order(lda.data$topic),]
 lda.data.sorted
 
-lsa.data <- data.frame(read.xlsx(paste(wd, "/lda-lsa/lsaresults_sorted_curatedafg_100.xlsx", sep=""), sheetIndex = 1, header = TRUE))
+lsa.data <- data.frame(read.xlsx(paste(wd, "/Documents/lda-lsa/lsaresults_sorted_curatedafg_100.xlsx", sep=""), sheetIndex = 1, header = TRUE))
 colnames(lsa.data) <- c("topic", "lsa")
 lsa.data$topic <- as.numeric(lsa.data$topic)
 lsa.data$lsa <- as.numeric(lsa.data$lsa)

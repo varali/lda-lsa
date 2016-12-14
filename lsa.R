@@ -48,6 +48,7 @@ td.mat
 # MDS with LSA
 td.mat.lsa <- lw_bintf(td.mat) * gw_idf(td.mat) # weighting
 lsaSpace <- lsa(td.mat.lsa) # create LSA space
+#do foldin() here
 dist.mat.lsa <- dist(t(as.textmatrix(lsaSpace))) # compute distance matrix
 dist.mat.lsa # check distance matrix
 
