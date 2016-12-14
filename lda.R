@@ -26,19 +26,15 @@ cluster.sort <- function(data,f=median) {
 
 # Read in documents 
 wd <- getwd()
-testdata <- apply(read.table(paste(wd, "/Documents/lda-lsa/curatedafg_100_summary.csv", sep=""), header=FALSE, sep=","), 2, as.character)
+testdata <- apply(read.table(paste(wd, "/lda-lsa/curatedafg_100_summary.csv", sep=""), header=FALSE, sep=","), 2, as.character)
 testdata <- unname(testdata)
-
-view <- factor(rep(c("topic 1", "topic 2", "topic 3", "topic 4", "topic 5"), each = 20))
-df <- data.frame(testdata, view, stringsAsFactors = FALSE)
-df
 
 testmatrix <- create_matrix(testdata, language="english", removeNumbers=TRUE, stemWords=TRUE)
 testmatrix
 
 # perform lda with 5 topics and 10 starts
 k <- 5
-lda <- LDA(testmatrix, k, control = list(estimate.alpha = TRUE, alpha = 0.1, seed = seq(1, 10), nstart = 10)) 
+lda <- LDA(testmatrix, k, control = list(estimate.alpha = TRUE, alpha = 50, seed = seq(1, 10), nstart = 10)) 
 str(lda)
 
 terms(lda)
@@ -50,9 +46,9 @@ data.lda <- topics(lda)
 data.lda
 
 library(xlsx)
-write.xlsx(data.lda, file = paste(wd, "/Documents/lda-lsa/ldaresults_curatedafg_100_5.xlsx", sep=""))
+write.xlsx(data.lda, file = paste(wd, "/lda-lsa/ldaresults_curatedafg_100_5.xlsx", sep=""))
 
-preselected_topics <- read.xlsx(paste(wd, "/Documents/lda-lsa/preselected_topics.xlsx", sep=""), sheetIndex = 1, header = FALSE)
+preselected_topics <- read.xlsx(paste(wd, "/lda-lsa/preselected_topics.xlsx", sep=""), sheetIndex = 1, header = FALSE)
 preselected_topics 
 
 assn.sorted <- sort(preselected_topics$X1)
@@ -64,4 +60,4 @@ assn.perm
 lda.sorted <- cluster.sort(data.lda[assn.perm])
 lda.sorted
 
-write.xlsx(lda.sorted, file = paste(wd, "/Documents/lda-lsa/ldaresults_sorted_curatedafg_100.xlsx", sep=""))
+write.xlsx(lda.sorted, file = paste(wd, "/lda-lsa/ldaresults_sorted_curatedafg_100.xlsx", sep=""))

@@ -73,7 +73,7 @@ data.kmeans
 library(xlsx)
 write.xlsx(data.kmeans, file = paste(wd, "/lda-lsa/lsaresults_curatedafg_100_5.xlsx", sep=""))
 
-preselected_topics <- read.xlsx("/Users/feignedpoet/Documents/lda-lsa/preselected_topics.xlsx", sheetIndex = 1, header = FALSE)
+preselected_topics <- read.xlsx(paste(wd, "/lda-lsa/preselected_topics.xlsx", sep=""), sheetIndex = 1, header = FALSE)
 preselected_topics 
 
 assn.sorted <- sort(preselected_topics$X1)
