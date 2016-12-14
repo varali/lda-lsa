@@ -2,6 +2,8 @@
 # Base code taken from
 # http://www.rtexttools.com/blog/getting-started-with-latent-dirichlet-allocation-using-rtexttools-topicmodels
 
+#random comment
+
 # Import library files
 library(RTextTools)
 library(topicmodels)  
