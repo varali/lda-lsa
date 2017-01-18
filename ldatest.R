@@ -15,3 +15,6 @@ tdata.lda.training
 
 tdata.lda.testing <- apply(lda_inf$topics, 1, which.max)
 tdata.lda.testing
+
+# Use the sample function
+# sample(5,2)

@@ -27,16 +27,16 @@ lsa.data.sorted <- lsa.data[order(lsa.data$topic),]
 lsa.data.sorted
 
 jdm.lda <- matrix(data=0.0, nrow=5, ncol=5)
-colnames(jdm.lda) <- c("cur1", "cur2", "cur3", "cur4", "cur5")
-rownames(jdm.lda) <- c("lda1", "lda2", "lda3", "lda4", "lda5")
+rownames(jdm.lda) <- c("cur1", "cur2", "cur3", "cur4", "cur5")
+colnames(jdm.lda) <- c("lda1", "lda2", "lda3", "lda4", "lda5")
 
 for (i in 1:100) {
   jdm.lda[curated.data[i,],lda.data.sorted[i,]$lda] = jdm.lda[curated.data[i,],lda.data.sorted[i,]$lda] + 1
 }
 
 jdm.lsa <- matrix(data=0.0, nrow=5, ncol=5)
-colnames(jdm.lsa) <- c("cur1", "cur2", "cur3", "cur4", "cur5")
-rownames(jdm.lsa) <- c("lsa1", "lsa2", "lsa3", "lsa4", "lsa5")
+rownames(jdm.lsa) <- c("cur1", "cur2", "cur3", "cur4", "cur5")
+colnames(jdm.lsa) <- c("lsa1", "lsa2", "lsa3", "lsa4", "lsa5")
 
 for (i in 1:100) {
   jdm.lsa[curated.data[i,],lsa.data.sorted[i,]$lsa] = jdm.lsa[curated.data[i,],lsa.data.sorted[i,]$lsa] + 1

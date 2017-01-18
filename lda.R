@@ -32,9 +32,16 @@ testdata <- unname(testdata)
 testmatrix <- create_matrix(testdata, language="english", removeNumbers=TRUE, stemWords=TRUE)
 testmatrix
 
+# get random sample of 90 from the 100
+s.indices <- sample(100,90)
+s.indices
+
+s.data <- testdata[c(s.indices)]
+s.matrix <- create_matrix(s.data, language="english", removeNumbers=TRUE, stemWords=TRUE)
+
 # perform lda with 5 topics and 10 starts
 k <- 5
-lda <- LDA(testmatrix, k, control = list(estimate.alpha = TRUE, alpha = 50, seed = seq(1, 10), nstart = 10)) 
+lda <- LDA(s.matrix, k, control = list(estimate.alpha = TRUE, alpha = 50, seed = seq(1, 10), nstart = 10)) 
 str(lda)
 
 terms(lda)
@@ -43,21 +50,58 @@ str(topics(lda))
 
 # Split documents into topics and list in two rows
 data.lda <- topics(lda)
-data.lda
+#data.lda
 
 library(xlsx)
 write.xlsx(data.lda, file = paste(wd, "/lda-lsa/ldaresults_curatedafg_100_5.xlsx", sep=""))
 
 preselected_topics <- read.xlsx(paste(wd, "/lda-lsa/preselected_topics.xlsx", sep=""), sheetIndex = 1, header = FALSE)
-preselected_topics 
+#preselected_topics 
 
 assn.sorted <- sort(preselected_topics$X1)
-assn.sorted
+#assn.sorted
 
 assn.perm <- sort(preselected_topics$X1, index.return=TRUE)$ix
-assn.perm
+#assn.perm
 
 lda.sorted <- cluster.sort(data.lda[assn.perm])
-lda.sorted
+#lda.sorted
 
 write.xlsx(lda.sorted, file = paste(wd, "/lda-lsa/ldaresults_sorted_curatedafg_100.xlsx", sep=""))
+
+
+# Joint distribution matrix 
+
+curated.data <- data.frame(read.xlsx(paste(wd, "/lda-lsa/preselected_topics.xlsx", sep=""), sheetIndex = 1, header = FALSE))
+colnames(curated.data) <- c("curated")
+#curated.data
+
+lda.data <- data.frame(read.xlsx(paste(wd, "/lda-lsa/ldaresults_sorted_curatedafg_100.xlsx", sep=""), sheetIndex = 1, header = TRUE))
+colnames(lda.data) <- c("topic", "lda")
+#lda.data
+lda.data$topic <- as.numeric(as.character(lda.data$topic))
+lda.data$lda <- as.numeric(as.character(lda.data$lda))
+#lda.data
+lda.data.sorted <- lda.data[order(lda.data$topic),]
+#lda.data.sorted
+
+jdm.lda <- matrix(data=0.0, nrow=5, ncol=5)
+rownames(jdm.lda) <- c("cur1", "cur2", "cur3", "cur4", "cur5")
+colnames(jdm.lda) <- c("lda1", "lda2", "lda3", "lda4", "lda5")
+
+for (i in 1:100) {
+  jdm.lda[curated.data[i,],lda.data.sorted[i,]$lda] = jdm.lda[curated.data[i,],lda.data.sorted[i,]$lda] + 1
+}
+
+for (i in 1:5) {
+  for (j in 1:5) {
+    jdm.lda[i,j] = jdm.lda[i, j] / 100
+  }
+}
+#jdm.lda
+
+image.plot(t(jdm.lda), graphics.reset = TRUE)
+
+# Calculate mutual information for LDA
+marginals.lda <- as.matrix(apply(jdm.lda, 1, sum)) %*% apply(jdm.lda, 2, sum) 
+sum(jdm.lda * log2(jdm.lda/marginals.lda), na.rm = TRUE)
