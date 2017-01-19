@@ -32,6 +32,12 @@ testdata <- unname(testdata)
 testmatrix <- create_matrix(testdata, language="english", removeNumbers=TRUE, stemWords=TRUE)
 testmatrix
 
+iterations <- 10
+mutual.info <- vector(mode = "numeric", length = iterations)
+terms <- list()
+
+for (s in 1:iterations) {
+  
 # get random sample of 90 from the 100
 s.indices <- sample(100,90)
 s.indices
@@ -41,12 +47,12 @@ s.matrix <- create_matrix(s.data, language="english", removeNumbers=TRUE, stemWo
 
 # perform lda with 5 topics and 10 starts
 k <- 5
-lda <- LDA(s.matrix, k, control = list(estimate.alpha = TRUE, alpha = 50, seed = seq(1, 10), nstart = 10)) 
-str(lda)
+lda <- LDA(s.matrix, k, control = list(estimate.alpha = TRUE, alpha = 10, seed = seq(1, 10), nstart = 10)) 
+#str(lda)
 
 terms(lda)
 
-str(topics(lda))
+#str(topics(lda))
 
 # Split documents into topics and list in two rows
 data.lda <- topics(lda)
@@ -58,10 +64,7 @@ write.xlsx(data.lda, file = paste(wd, "/lda-lsa/ldaresults_curatedafg_100_5.xlsx
 preselected_topics <- read.xlsx(paste(wd, "/lda-lsa/preselected_topics.xlsx", sep=""), sheetIndex = 1, header = FALSE)
 #preselected_topics 
 
-assn.sorted <- sort(preselected_topics$X1)
-#assn.sorted
-
-assn.perm <- sort(preselected_topics$X1, index.return=TRUE)$ix
+assn.perm <- sort(preselected_topics$X1[s.indices], index.return=TRUE)$ix
 #assn.perm
 
 lda.sorted <- cluster.sort(data.lda[assn.perm])
@@ -105,3 +108,11 @@ image.plot(t(jdm.lda), graphics.reset = TRUE)
 # Calculate mutual information for LDA
 marginals.lda <- as.matrix(apply(jdm.lda, 1, sum)) %*% apply(jdm.lda, 2, sum) 
 sum(jdm.lda * log2(jdm.lda/marginals.lda), na.rm = TRUE)
+
+mutual.info[s] <- sum(jdm.lda * log2(jdm.lda/marginals.lda), na.rm = TRUE)
+terms[[s]] <- (terms(lda))
+
+} # end for loop
+
+
+print("DONE")
