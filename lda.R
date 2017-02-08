@@ -9,6 +9,7 @@ library(RTextTools)
 library(topicmodels)  
 library(ggplot2)
 library(xlsx)
+library(fields)
 
 # jphillips 
 cluster.sort <- function(data,f=median) {
@@ -44,6 +45,7 @@ s.indices
 
 s.data <- testdata[c(s.indices)]
 s.matrix <- create_matrix(s.data, language="english", removeNumbers=TRUE, stemWords=TRUE)
+
 
 # perform lda with 5 topics and 10 starts
 k <- 5
@@ -111,6 +113,15 @@ sum(jdm.lda * log2(jdm.lda/marginals.lda), na.rm = TRUE)
 
 mutual.info[s] <- sum(jdm.lda * log2(jdm.lda/marginals.lda), na.rm = TRUE)
 terms[[s]] <- (terms(lda))
+
+# Begin testing posterior data
+
+s.test.data <- testdata[c(-s.indices)]
+s.test.matrix <- create_matrix(s.test.data, language="english", removeNumbers=TRUE, stemWords=TRUE)
+lda.testing <- posterior(lda, s.test.matrix)
+test.results <- apply(lda.testing$topics, 1, which.max)
+test.results
+
 
 } # end for loop
 
