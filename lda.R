@@ -54,7 +54,7 @@ for (s in 1:iterations) {
 
   ############## TRAIN LDA ##############
   k <- 5
-  lda <- LDA(s.matrix, k, control = list(estimate.alpha = TRUE, alpha = 10, seed = seq(1, 10), nstart = 10)) 
+  lda <- LDA(s.matrix, k, control = list(estimate.alpha = TRUE, alpha = 5, seed = seq(1, 10), nstart = 10)) 
   #str(lda)
 
   terms(lda)
