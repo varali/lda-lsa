@@ -34,12 +34,17 @@ testmatrix <- create_matrix(testdata, language="english", removeNumbers=TRUE, st
 testmatrix
 
 ############## INIT VECTORS ##############
-iterations <- 100
+iterations <- 10000
 mutual.info <- vector(mode = "numeric", length = iterations)
 document.count <- vector(mode = "numeric", length = 100)
 document.mutual.info <- vector(mode = "numeric", length = 100)
 terms <- list()
+miv <- list()
+for (i in 1:100) {
+  miv[[i]] <- 0
+}
 
+############## BEGIN LOOP ##############
 for (s in 1:iterations) {
   
   print(s)
@@ -169,6 +174,13 @@ for (s in 1:iterations) {
     if (i %in% documents.used) {
       document.mutual.info[i] <- document.mutual.info[i] + mutual.info[s]
       document.count[i] <- document.count[i] + 1
+      if (document.count[i] == 1) {
+        miv[[i]] <- mutual.info[s]
+      }
+      else {
+        miv[[i]] <- c(mutual.info[s], miv[[i]])
+      }
+      
     }
   }
 
