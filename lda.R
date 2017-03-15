@@ -161,7 +161,7 @@ for (s in 1:iterations) {
   }
   #jdm.testset
 
-  image.plot(t(jdm.testset), graphics.reset = TRUE)
+  #CRN for speed image.plot(t(jdm.testset), graphics.reset = TRUE)
 
   # Calculate mutual information for LDA
   marginals.testset <- as.matrix(apply(jdm.testset, 1, sum)) %*% apply(jdm.testset, 2, sum) 
@@ -188,5 +188,11 @@ for (s in 1:iterations) {
 
 d.average <- document.mutual.info / document.count
 d.average[is.na(d.average)] <- 0
+
+#stats <- boxplot.stats(sapply(miv, median))$stats
+#ltMed <- which(sapply(miv, median) < stats[3])
+#gtMed <- which(sapply(miv, median) > stats[3])
+
+
 
 print("DONE")
