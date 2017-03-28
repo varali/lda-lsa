@@ -16,8 +16,12 @@ cluster.sort <- function(data,f=median) {
 
 
 stats <- boxplot.stats(sapply(miv, median))$stats
+
+# Get files that were less than and greater than the median in miv
 ltMed <- which(sapply(miv, median) < stats[3])
 gtMed <- which(sapply(miv, median) > stats[3])
+
+filesToUse <- gtMed
 
 ############## READ IN DATA AGAIN ##############
 testdata <- apply(read.table(paste(wd, "/lda-lsa/curatedafg_100_summary.csv", sep=""), header=FALSE, sep=","), 2, as.character)
@@ -26,7 +30,7 @@ testdata <- unname(testdata)
 testmatrix <- create_matrix(testdata, language="english", removeNumbers=TRUE, stemWords=TRUE)
 testmatrix
 
-iterations <- 10000
+iterations <- 1
 pp.mutual.info <- vector(mode = "numeric", length = iterations)
 pp.document.count <- vector(mode = "numeric", length = 100)
 pp.document.mutual.info <- vector(mode = "numeric", length = 100)
@@ -39,9 +43,7 @@ for (i in 1:100) {
 ############## START LOOP ##############
 for (s in 1:iterations) {
   
-  print(s)
-  
-  s.data <- testdata[c(gtMed)]
+  s.data <- testdata[c(filesToUse)]
   s.matrix <- create_matrix(s.data, language="english", removeNumbers=TRUE, stemWords=TRUE)
   
   ############## TRAIN LDA ##############
@@ -58,7 +60,7 @@ for (s in 1:iterations) {
   preselected_topics <- read.xlsx(paste(wd, "/lda-lsa/preselected_topics.xlsx", sep=""), sheetIndex = 1, header = FALSE)
   #preselected_topics 
   
-  assn.perm <- sort(preselected_topics$X1[gtMed], index.return=TRUE)$ix
+  assn.perm <- sort(preselected_topics$X1[filesToUse], index.return=TRUE)$ix
   #assn.perm
   
   lda.sorted <- cluster.sort(data.lda[assn.perm])
@@ -69,20 +71,20 @@ for (s in 1:iterations) {
   
   ############## CREATE TEST SET ##############
   
-  s.test.data <- testdata[c(-gtMed)]
+  s.test.data <- testdata[c(-filesToUse)]
   s.test.matrix <- create_matrix(s.test.data, language="english", removeNumbers=TRUE, stemWords=TRUE)
   lda.testing <- posterior(lda, s.test.matrix)
   test.results <- apply(lda.testing$topics, 1, which.max)
   test.results
   
-  s.assn.perm <- sort(preselected_topics$X1[c(-gtMed)], index.return=TRUE)$ix
+  s.assn.perm <- sort(preselected_topics$X1[c(-filesToUse)], index.return=TRUE)$ix
   s.lda.sorted <- cluster.sort(test.results[s.assn.perm])
   
   write.xlsx(s.lda.sorted, file = paste(wd, "/lda-lsa/ldaresults_test_set_sorted_curatedafg_100.xlsx", sep=""))
   
   ############## TEST SET JDM ##############
   s.curated.data <- curated.data[,1]
-  s.curated.data <- s.curated.data[c(-gtMed)]
+  s.curated.data <- s.curated.data[c(-filesToUse)]
   
   testset.sorted <- data.frame(read.xlsx(paste(wd, "/lda-lsa/ldaresults_test_set_sorted_curatedafg_100.xlsx", sep=""), sheetIndex = 1, header = TRUE))
   colnames(testset.sorted) <- c("topic", "lda")
@@ -112,7 +114,7 @@ for (s in 1:iterations) {
   
   pp.mutual.info[s] <- sum(jdm.testset * log2(jdm.testset/marginals.testset), na.rm = TRUE)
   
-  pp.documents.used <- setdiff(1:100, gtMed)
+  pp.documents.used <- setdiff(1:100, filesToUse)
   for (i in 1:100) {
     if (i %in% pp.documents.used) {
       pp.document.mutual.info[i] <- pp.document.mutual.info[i] + pp.mutual.info[s]
@@ -126,6 +128,8 @@ for (s in 1:iterations) {
       
     }
   }
+  
+  cat(sprintf("%d: %f\n", s, pp.mutual.info[s]))
   
 }
 
