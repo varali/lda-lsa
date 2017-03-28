@@ -1,4 +1,9 @@
-
+# Import library files
+library(RTextTools)
+library(topicmodels)  
+library(ggplot2)
+library(xlsx)
+library(fields)
 
 # jphillips 
 cluster.sort <- function(data,f=median) {
