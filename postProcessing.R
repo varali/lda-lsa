@@ -23,10 +23,31 @@ cluster.sort <- function(data,f=median) {
 stats <- boxplot.stats(sapply(miv, median))$stats
 
 # Get files that were less than and greater than the median in miv
-ltMed <- which(sapply(miv, median) < stats[3])
-gtMed <- which(sapply(miv, median) > stats[3])
+ltMed50 <- which(sapply(miv, median) < stats[3])
+gtMed50 <- which(sapply(miv, median) > stats[3])
 
-filesToUse <- gtMed
+medians <- sapply(miv, median)
+highest90 <- tail(sort(medians), 90)
+gtMed90 <- which(medians %in% highest90)
+lowest90 <- head(sort(medians), 90)
+ltMed90 <- which(medians %in% lowest90)
+
+highest10 <- tail(sort(medians), 10)
+gtMed10 <- which(medians %in% highest10)
+lowest10 <- head(sort(medians), 10)
+ltMed10 <- which(medians %in% lowest10)
+
+highest25 <- tail(sort(medians), 25)
+gtMed25 <- which(medians %in% highest25)
+lowest25 <- head(sort(medians), 25)
+ltMed25 <- which(medians %in% lowest25)
+
+highest75 <- tail(sort(medians), 75)
+gtMed75 <- which(medians %in% highest75)
+lowest75 <- head(sort(medians), 75)
+ltMed75 <- which(medians %in% lowest75)
+
+filesToUse <- ltMed75
 
 ############## READ IN DATA AGAIN ##############
 testdata <- apply(read.table(paste(wd, "/lda-lsa/curatedafg_100_summary.csv", sep=""), header=FALSE, sep=","), 2, as.character)

@@ -34,7 +34,7 @@ testmatrix <- create_matrix(testdata, language="english", removeNumbers=TRUE, st
 testmatrix
 
 ############## INIT VECTORS ##############
-iterations <- 1000
+iterations <- 10000
 mutual.info <- vector(mode = "numeric", length = iterations)
 document.count <- vector(mode = "numeric", length = 100)
 document.mutual.info <- vector(mode = "numeric", length = 100)
@@ -48,7 +48,7 @@ for (i in 1:100) {
 for (s in 1:iterations) {
   
   # get random sample of 50 from the 100
-  s.indices <- sample(100,50)
+  s.indices <- sample(100,75)
   s.indices
 
   s.data <- testdata[c(s.indices)]
