@@ -47,7 +47,7 @@ gtMed75 <- which(medians %in% highest75)
 lowest75 <- head(sort(medians), 75)
 ltMed75 <- which(medians %in% lowest75)
 
-filesToUse <- ltMed75
+filesToUse <- ltMed50
 
 ############## READ IN DATA AGAIN ##############
 testdata <- apply(read.table(paste(wd, "/lda-lsa/curatedafg_100_summary.csv", sep=""), header=FALSE, sep=","), 2, as.character)
