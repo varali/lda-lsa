@@ -47,7 +47,7 @@ for (i in 1:100) {
 labeled.indices <- sample(100,10)
 unlabeled.indices <- c(1:100)[-labeled.indices]
 
-s = 1
+s <- 1
 
 ############## BEGIN LOOP ##############
 while (s <= iterations) {
@@ -149,6 +149,7 @@ while (s <= iterations) {
   #CRN before labeling s.assn.perm <- sort(preselected_topics$X1[c(-s.indices)], index.return=TRUE)$ix
   s.assn.perm <- sort(preselected_topics$X1[labeledTesting], index.return=TRUE)$ix
   s.lda.sorted <- cluster.sort(test.results[s.assn.perm])
+  print(s.lda.sorted)
   write.xlsx(s.lda.sorted, file = paste(wd, "/lda-lsa/ldaresults_test_set_sorted_curatedafg_100.xlsx", sep=""))
   
   ############## TEST SET JDM ##############

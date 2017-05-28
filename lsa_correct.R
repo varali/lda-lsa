@@ -30,7 +30,8 @@ testtext <- apply(read.table(paste(wd, "/lda-lsa/curatedafg_100_summary.csv", se
 testtext <- unname(testtext)
 #testtext
 
-iterations <- 10
+############## INIT VECTORS ##############
+iterations <- 10000
 mutual.info <- vector(mode = "numeric", length = iterations)
 document.count <- vector(mode = "numeric", length = 100)
 document.mutual.info <- vector(mode = "numeric", length = 100)
@@ -65,13 +66,12 @@ for (s in 1:iterations) {
   
   #do foldin() here
   set.seed(s)
-  s.indices <- sample(100,75)
+  s.indices <- sample(100,50)
   s.indices <- sort(s.indices)
   
   #print(s.indices)
   trainingSet <- td.mat.lsa[, s.indices]
   trainingLsa <- lsa(trainingSet)
-  
   
   testingSpace <- fold_in(td.mat.lsa[, c(1:100)[-s.indices]], trainingLsa)
   trainingSpace <- fold_in(td.mat.lsa[, s.indices], trainingLsa)
@@ -118,66 +118,63 @@ for (s in 1:iterations) {
   # Split documents into topics and display in two rows
   data.kmeans <- kmeans(fit$points, k, nstart = 10)$cluster
   data.kmeans
-
-  write.xlsx(data.kmeans, file = paste(wd, "/lda-lsa/lsaresults_curatedafg_100_5.xlsx", sep=""))
-
+  
   preselected_topics <- read.xlsx(paste(wd, "/lda-lsa/preselected_topics.xlsx", sep=""), sheetIndex = 1, header = FALSE)
-  #preselected_topics 
+  
+  s.assn.perm <- sort(preselected_topics$X1[c(-s.indices)], index.return=TRUE)$ix
+  s.lsa.sorted <- cluster.sort(data.kmeans[s.assn.perm])
+  
+  print(s.lsa.sorted)
+  
+  # make sure there are at least two unique in labeled test set
+  if (length(unique(s.lsa.sorted)) == 1) {
+    randint <- randint + 1
+    if (randint >= 50) {
+      randint <- 1
+    }
+    next
+  }
 
-  # CRN bug? added [s.indices] after X1
-  assn.sorted <- sort(preselected_topics$X1[s.indices])
-  #print(assn.sorted)
-  write.xlsx(assn.sorted, file = paste(wd, "/lda-lsa/preselected_topics_sorted.xlsx", sep=""))
-
-  assn.perm <- sort(preselected_topics$X1, index.return=TRUE)$ix
-  #print(assn.perm)
-
-  lsa.sorted <- cluster.sort(data.kmeans[assn.perm])
-  #print(lsa.sorted)
-  print(data.kmeans[c(1:100)[-s.indices]])
-
-  write.xlsx(lsa.sorted, file = paste(wd, "/lda-lsa/lsaresults_sorted_curatedafg_100.xlsx", sep=""))
-  print(lsa.sorted)
-  ############## TRAINING SET JDM ##############
-
+  write.xlsx(s.lsa.sorted, file = paste(wd, "/lda-lsa/lsaresults_test_set_sorted_curatedafg_100.xlsx", sep=""))
+  
+  
+  ############## TEST SET JDM ##############
   curated.data <- data.frame(read.xlsx(paste(wd, "/lda-lsa/preselected_topics.xlsx", sep=""), sheetIndex = 1, header = FALSE))
   colnames(curated.data) <- c("curated")
-  curated.data
-
-  ############## TEST SET JDM ##############
-
-  lsa.data <- data.frame(read.xlsx(paste(wd, "/lda-lsa/lsaresults_sorted_curatedafg_100.xlsx", sep=""), sheetIndex = 1, header = TRUE))
-  #print(lsa.data)
+  s.curated.data <- curated.data[,1]
+  s.curated.data <- s.curated.data[c(-s.indices)]
   
-  colnames(lsa.data) <- c("topic", "lsa")
-  lsa.data$topic <- as.numeric(lsa.data$topic)
-  lsa.data$lsa <- as.numeric(lsa.data$lsa)
-  lsa.data.sorted <- lsa.data[order(lsa.data$topic),]
-  lsa.data.sorted
+  testset.sorted <- data.frame(read.xlsx(paste(wd, "/lda-lsa/ldaresults_test_set_sorted_curatedafg_100.xlsx", sep=""), sheetIndex = 1, header = TRUE))
+  colnames(testset.sorted) <- c("topic", "lsa")
+  
+  testset.sorted$topic <- as.numeric(testset.sorted$topic)
+  testset.sorted$lsa <- as.numeric(testset.sorted$lsa)
+  
+  testset.resorted <- testset.sorted[order(testset.sorted$topic),]
 
-  jdm.lsa <- matrix(data=0.0, nrow=5, ncol=5)
-  rownames(jdm.lsa) <- c("cur1", "cur2", "cur3", "cur4", "cur5")
-  colnames(jdm.lsa) <- c("lsa1", "lsa2", "lsa3", "lsa4", "lsa5")
+  jdm.testset <- matrix(data=0.0, nrow=5, ncol=5)
+  rownames(jdm.testset) <- c("cur1", "cur2", "cur3", "cur4", "cur5")
+  colnames(jdm.testset) <- c("lsa1", "lsa2", "lsa3", "lsa4", "lsa5")
 
   for (i in 1:100) {
-    jdm.lsa[curated.data[i,],lsa.data.sorted[i,]$lsa] = jdm.lsa[curated.data[i,],lsa.data.sorted[i,]$lsa] + 1
+    jdm.testset[s.curated.data[i],testset.resorted[i,]$lsa] = jdm.testset[s.curated.data[i],testset.resorted[i,]$lsa] + 1
   }
 
   for (i in 1:5) {
     for (j in 1:5) {
-      jdm.lsa[i,j] = jdm.lsa[i, j] / 100
+      jdm.testset[i,j] = jdm.testset[i, j] / 100
     }
   }
   
-  print(jdm.lsa)
+  print(jdm.testset)
 
-  image.plot(jdm.lsa, graphics.reset = TRUE)
+  #image.plot(jdm.lsa, graphics.reset = TRUE)
 
   # Calculate mutual information for LSA
-  marginals.lsa <- as.matrix(apply(jdm.lsa, 1, sum)) %*% apply(jdm.lsa, 2, sum) 
-  sum(jdm.lsa * log2(jdm.lsa/marginals.lsa), na.rm = TRUE)
+  marginals.lsa <- as.matrix(apply(jdm.testset, 1, sum)) %*% apply(jdm.testset, 2, sum) 
+  sum(jdm.testset * log2(jdm.testset/marginals.lsa), na.rm = TRUE)
 
-  mutual.info[s] <- sum(jdm.lsa * log2(jdm.lsa/marginals.lsa), na.rm = TRUE)
+  mutual.info[s] <- sum(jdm.testset * log2(jdm.testset/marginals.lsa), na.rm = TRUE)
   
   documents.used <- setdiff(1:100, s.indices)
   for (i in 1:100) {

@@ -34,7 +34,7 @@ testmatrix <- create_matrix(testdata, language="english", removeNumbers=TRUE, st
 testmatrix
 
 ############## INIT VECTORS ##############
-iterations <- 10000
+iterations <- 10
 mutual.info <- vector(mode = "numeric", length = iterations)
 document.count <- vector(mode = "numeric", length = 100)
 document.mutual.info <- vector(mode = "numeric", length = 100)
@@ -86,49 +86,18 @@ for (s in 1:iterations) {
   colnames(curated.data) <- c("curated")
   #curated.data
 
-  #lda.data <- data.frame(read.xlsx(paste(wd, "/lda-lsa/ldaresults_sorted_curatedafg_100.xlsx", sep=""), sheetIndex = 1, header = TRUE))
-  #colnames(lda.data) <- c("topic", "lda")
-  #lda.data
-  #lda.data$topic <- as.numeric(as.character(lda.data$topic))
-  #lda.data$lda <- as.numeric(as.character(lda.data$lda))
-  #lda.data
-  #lda.data.sorted <- lda.data[order(lda.data$topic),]
-  #lda.data.sorted
-
-  #jdm.lda <- matrix(data=0.0, nrow=5, ncol=5)
-  #rownames(jdm.lda) <- c("cur1", "cur2", "cur3", "cur4", "cur5")
-  #colnames(jdm.lda) <- c("lda1", "lda2", "lda3", "lda4", "lda5")
-
-  #for (i in 1:100) {
-    #jdm.lda[curated.data[i,],lda.data.sorted[i,]$lda] = jdm.lda[curated.data[i,],lda.data.sorted[i,]$lda] + 1
-  #}
-
-  #for (i in 1:5) {
-    #for (j in 1:5) {
-      #jdm.lda[i,j] = jdm.lda[i, j] / 100
-    #}
-  #}
-  #jdm.lda
-
-  #image.plot(t(jdm.lda), graphics.reset = TRUE)
-
-  # Calculate mutual information for LDA
-  #marginals.lda <- as.matrix(apply(jdm.lda, 1, sum)) %*% apply(jdm.lda, 2, sum) 
-  #sum(jdm.lda * log2(jdm.lda/marginals.lda), na.rm = TRUE)
-
-  #mutual.info[s] <- sum(jdm.lda * log2(jdm.lda/marginals.lda), na.rm = TRUE)
-  #terms[[s]] <- (terms(lda))
-
   ############## CREATE TEST SET ##############
-
+  
+  #print(testdata)
   s.test.data <- testdata[c(-s.indices)]
   s.test.matrix <- create_matrix(s.test.data, language="english", removeNumbers=TRUE, stemWords=TRUE)
   lda.testing <- posterior(lda, s.test.matrix)
   test.results <- apply(lda.testing$topics, 1, which.max)
-  test.results
+  #print(test.results)
 
   s.assn.perm <- sort(preselected_topics$X1[c(-s.indices)], index.return=TRUE)$ix
   s.lda.sorted <- cluster.sort(test.results[s.assn.perm])
+  print(s.lda.sorted)
   write.xlsx(s.lda.sorted, file = paste(wd, "/lda-lsa/ldaresults_test_set_sorted_curatedafg_100.xlsx", sep=""))
 
   ############## TEST SET JDM ##############
