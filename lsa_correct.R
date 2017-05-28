@@ -31,7 +31,7 @@ testtext <- unname(testtext)
 #testtext
 
 ############## INIT VECTORS ##############
-iterations <- 10000
+iterations <- 10
 mutual.info <- vector(mode = "numeric", length = iterations)
 document.count <- vector(mode = "numeric", length = 100)
 document.mutual.info <- vector(mode = "numeric", length = 100)
@@ -156,25 +156,29 @@ for (s in 1:iterations) {
   rownames(jdm.testset) <- c("cur1", "cur2", "cur3", "cur4", "cur5")
   colnames(jdm.testset) <- c("lsa1", "lsa2", "lsa3", "lsa4", "lsa5")
 
-  for (i in 1:100) {
+  for (i in 1:10) {
     jdm.testset[s.curated.data[i],testset.resorted[i,]$lsa] = jdm.testset[s.curated.data[i],testset.resorted[i,]$lsa] + 1
   }
 
+  print(jdm.testset)
+  
   for (i in 1:5) {
     for (j in 1:5) {
-      jdm.testset[i,j] = jdm.testset[i, j] / 100
+      jdm.testset[i,j] = jdm.testset[i, j] / 10
     }
   }
   
   print(jdm.testset)
 
-  #image.plot(jdm.lsa, graphics.reset = TRUE)
-
+  
   # Calculate mutual information for LSA
   marginals.lsa <- as.matrix(apply(jdm.testset, 1, sum)) %*% apply(jdm.testset, 2, sum) 
   sum(jdm.testset * log2(jdm.testset/marginals.lsa), na.rm = TRUE)
 
   mutual.info[s] <- sum(jdm.testset * log2(jdm.testset/marginals.lsa), na.rm = TRUE)
+  plotTitle <- sprintf("LDA Image Plot at MIV %f", mutual.info[s])
+  image.plot(jdm.lsa, graphics.reset = TRUE, xlab="LSA Topic", ylab="Expected Topic", axes=F)
+  title(main=plotTitle)
   
   documents.used <- setdiff(1:100, s.indices)
   for (i in 1:100) {

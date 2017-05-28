@@ -60,7 +60,7 @@ for (s in 1:iterations) {
   lda <- LDA(s.matrix, k, control = list(estimate.alpha = TRUE, alpha = 5, seed = seq(1, 10), nstart = 10)) 
   #str(lda)
 
-  terms(lda)
+  print(terms(lda))
 
   # Split documents into topics and list in two rows
   data.lda <- topics(lda)
@@ -97,7 +97,7 @@ for (s in 1:iterations) {
 
   s.assn.perm <- sort(preselected_topics$X1[c(-s.indices)], index.return=TRUE)$ix
   s.lda.sorted <- cluster.sort(test.results[s.assn.perm])
-  print(s.lda.sorted)
+  #print(s.lda.sorted)
   write.xlsx(s.lda.sorted, file = paste(wd, "/lda-lsa/ldaresults_test_set_sorted_curatedafg_100.xlsx", sep=""))
 
   ############## TEST SET JDM ##############
@@ -128,14 +128,18 @@ for (s in 1:iterations) {
   }
   #jdm.testset
 
-  #CRN for speed image.plot(t(jdm.testset), graphics.reset = TRUE)
+  
 
   # Calculate mutual information for LDA
   marginals.testset <- as.matrix(apply(jdm.testset, 1, sum)) %*% apply(jdm.testset, 2, sum) 
   sum(jdm.testset * log2(jdm.testset/marginals.testset), na.rm = TRUE)
 
   mutual.info[s] <- sum(jdm.testset * log2(jdm.testset/marginals.testset), na.rm = TRUE)
-
+  
+  plotTitle <- sprintf("LDA Image Plot at MIV %f", mutual.info[s])
+  image.plot(t(jdm.testset), graphics.reset = TRUE, xlab="LDA Topic", ylab="Expected Topic", axes=F)
+  title(main=plotTitle)
+  
   documents.used <- setdiff(1:100, s.indices)
   for (i in 1:100) {
     if (i %in% documents.used) {
