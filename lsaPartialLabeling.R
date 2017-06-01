@@ -45,6 +45,9 @@ for (i in 1:100) {
 s.indices <- sample(100,90)
 randint <- 1
 
+numTraining <- 90
+numTesting <- 100 - numTraining
+
 #get random sample of 10 documents - these will be our labeled documents
 labeled.indices <- sample(100,10)
 unlabeled.indices <- c(1:100)[-labeled.indices]
@@ -57,7 +60,7 @@ while (s <= iterations) {
   
   # get random sample of 50 from the 100
   set.seed(s+s.indices[randint])
-  s.indices <- sample(100,50)
+  s.indices <- sample(100,numTraining)
   s.indices <- sort(s.indices)
   #print(s.indices)
   
@@ -67,7 +70,7 @@ while (s <= iterations) {
   #cat(sprintf("labeledTraining %d labeledTesting %d\n", length(labeledTraining), length(labeledTesting)))
   if (length(labeledTesting) < 2) {
     randint <- randint + 1
-    if (randint >= 50) {
+    if (randint >= numTraining) {
       randint <- 1
     }
     next 
@@ -146,7 +149,7 @@ while (s <= iterations) {
   # make sure there are at least two unique in labeled test set
   if (length(unique(s.lsa.sorted)) == 1) {
     randint <- randint + 1
-    if (randint >= 50) {
+    if (randint >= numTraining) {
       randint <- 1
     }
     next
@@ -173,13 +176,13 @@ while (s <= iterations) {
   rownames(jdm.testset) <- c("cur1", "cur2", "cur3", "cur4", "cur5")
   colnames(jdm.testset) <- c("lsa1", "lsa2", "lsa3", "lsa4", "lsa5")
   
-  for (i in 1:100) {
+  for (i in 1:numTesting) {
     jdm.testset[s.curated.data[i],testset.resorted[i,]$lsa] = jdm.testset[s.curated.data[i],testset.resorted[i,]$lsa] + 1
   }
   
   for (i in 1:5) {
     for (j in 1:5) {
-      jdm.testset[i,j] = jdm.testset[i, j] / 100
+      jdm.testset[i,j] = jdm.testset[i, j] / numTesting
     }
   }
   

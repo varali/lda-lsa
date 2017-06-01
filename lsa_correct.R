@@ -31,7 +31,7 @@ testtext <- unname(testtext)
 #testtext
 
 ############## INIT VECTORS ##############
-iterations <- 10
+iterations <- 50
 mutual.info <- vector(mode = "numeric", length = iterations)
 document.count <- vector(mode = "numeric", length = 100)
 document.mutual.info <- vector(mode = "numeric", length = 100)
@@ -39,6 +39,11 @@ miv <- list()
 for (i in 1:100) {
   miv[[i]] <- 0
 }
+
+randint <- 1
+
+numTraining <- 90
+numTesting <- 100 - numTraining
 
 for (s in 1:iterations) {
 
@@ -64,9 +69,9 @@ for (s in 1:iterations) {
   #CRN see below lsaSpace <- lsa(td.mat.lsa) # create LSA space
   
   
-  #do foldin() here
+  #do fold_in() here
   set.seed(s)
-  s.indices <- sample(100,50)
+  s.indices <- sample(100,numTraining)
   s.indices <- sort(s.indices)
   
   #print(s.indices)
@@ -156,7 +161,7 @@ for (s in 1:iterations) {
   rownames(jdm.testset) <- c("cur1", "cur2", "cur3", "cur4", "cur5")
   colnames(jdm.testset) <- c("lsa1", "lsa2", "lsa3", "lsa4", "lsa5")
 
-  for (i in 1:10) {
+  for (i in 1:numTesting) {
     jdm.testset[s.curated.data[i],testset.resorted[i,]$lsa] = jdm.testset[s.curated.data[i],testset.resorted[i,]$lsa] + 1
   }
 
@@ -164,7 +169,7 @@ for (s in 1:iterations) {
   
   for (i in 1:5) {
     for (j in 1:5) {
-      jdm.testset[i,j] = jdm.testset[i, j] / 10
+      jdm.testset[i,j] = jdm.testset[i, j] / numTesting
     }
   }
   
@@ -176,8 +181,8 @@ for (s in 1:iterations) {
   sum(jdm.testset * log2(jdm.testset/marginals.lsa), na.rm = TRUE)
 
   mutual.info[s] <- sum(jdm.testset * log2(jdm.testset/marginals.lsa), na.rm = TRUE)
-  plotTitle <- sprintf("LDA Image Plot at MIV %f", mutual.info[s])
-  image.plot(jdm.lsa, graphics.reset = TRUE, xlab="LSA Topic", ylab="Expected Topic", axes=F)
+  plotTitle <- sprintf("LSA Image Plot at MIV %f", mutual.info[s])
+  image.plot(jdm.testset, graphics.reset = TRUE, xlab="LSA Topic", ylab="Expected Topic", axes=F)
   title(main=plotTitle)
   
   documents.used <- setdiff(1:100, s.indices)

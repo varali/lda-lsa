@@ -11,7 +11,8 @@ library(ggplot2)
 library(xlsx)
 library(fields)
 
-# jphillips 
+# jphillips  
+
 cluster.sort <- function(data,f=median) {
   s <- seq(range(data)[1], range(data)[2])
   x <- rep(0,length(s))
@@ -34,7 +35,7 @@ testmatrix <- create_matrix(testdata, language="english", removeNumbers=TRUE, st
 testmatrix
 
 ############## INIT VECTORS ##############
-iterations <- 10
+iterations <- 1000
 mutual.info <- vector(mode = "numeric", length = iterations)
 document.count <- vector(mode = "numeric", length = 100)
 document.mutual.info <- vector(mode = "numeric", length = 100)
@@ -44,11 +45,14 @@ for (i in 1:100) {
   miv[[i]] <- 0
 }
 
+numTraining <- 90
+numTesting <- 100 - numTraining
+
 ############## BEGIN LOOP ##############
 for (s in 1:iterations) {
   
   # get random sample of 50 from the 100
-  s.indices <- sample(100,75)
+  s.indices <- sample(100,numTraining)
   s.indices
 
   s.data <- testdata[c(s.indices)]
@@ -117,16 +121,19 @@ for (s in 1:iterations) {
   rownames(jdm.testset) <- c("cur1", "cur2", "cur3", "cur4", "cur5")
   colnames(jdm.testset) <- c("lda1", "lda2", "lda3", "lda4", "lda5")
 
-  for (i in 1:10) {
+  for (i in 1:numTesting) {
     jdm.testset[s.curated.data[i],testset.resorted[i,]$lda] = jdm.testset[s.curated.data[i],testset.resorted[i,]$lda] + 1
   }
 
+  print(jdm.testset)
+  
   for (i in 1:5) {
     for (j in 1:5) {
-      jdm.testset[i,j] = jdm.testset[i, j] / 10
+      jdm.testset[i,j] = jdm.testset[i, j] / numTesting
     }
   }
-  #jdm.testset
+  
+  print(jdm.testset)
 
   
 

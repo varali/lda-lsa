@@ -31,23 +31,49 @@ highest90 <- tail(sort(medians), 90)
 gtMed90 <- which(medians %in% highest90)
 lowest90 <- head(sort(medians), 90)
 ltMed90 <- which(medians %in% lowest90)
+if (length(ltMed90) > 90) {
+  ltMed90 <- head(ltMed90, 90)
+}
+
 
 highest10 <- tail(sort(medians), 10)
 gtMed10 <- which(medians %in% highest10)
 lowest10 <- head(sort(medians), 10)
 ltMed10 <- which(medians %in% lowest10)
+if (length(ltMed10) > 10) {
+  ltMed10 <- head(ltMed10, 10)
+}
 
 highest25 <- tail(sort(medians), 25)
 gtMed25 <- which(medians %in% highest25)
 lowest25 <- head(sort(medians), 25)
 ltMed25 <- which(medians %in% lowest25)
+if (length(ltMed25) > 25) {
+  ltMed25 <- head(ltMed25, 25)
+}
 
 highest75 <- tail(sort(medians), 75)
 gtMed75 <- which(medians %in% highest75)
 lowest75 <- head(sort(medians), 75)
 ltMed75 <- which(medians %in% lowest75)
+if (length(ltMed75) > 75) {
+  ltMed75 <- head(ltMed75, 75)
+}
 
-filesToUse <- ltMed10
+
+highest50 <- tail(sort(medians), 50)
+gtMed50 <- which(medians %in% highest50)
+lowest50 <- head(sort(medians), 50)
+ltMed50 <- which(medians %in% lowest50)
+if (length(ltMed50) > 50) {
+  ltMed50 <- head(ltMed50, 50)
+}
+
+
+filesToUse <- ltMed25
+
+numTraining <- 25
+numTesting <- 100 - numTraining
 
 ############## READ IN DATA AGAIN ##############
 testdata <- apply(read.table(paste(wd, "/lda-lsa/curatedafg_100_summary.csv", sep=""), header=FALSE, sep=","), 2, as.character)
@@ -125,13 +151,13 @@ for (s in 1:iterations) {
   rownames(jdm.testset) <- c("cur1", "cur2", "cur3", "cur4", "cur5")
   colnames(jdm.testset) <- c("lda1", "lda2", "lda3", "lda4", "lda5")
   
-  for (i in 1:10) {
+  for (i in 1:numTesting) {
     jdm.testset[s.curated.data[i],testset.resorted[i,]$lda] = jdm.testset[s.curated.data[i],testset.resorted[i,]$lda] + 1
   }
   
   for (i in 1:5) {
     for (j in 1:5) {
-      jdm.testset[i,j] = jdm.testset[i, j] / 10
+      jdm.testset[i,j] = jdm.testset[i, j] / numTesting
     }
   }
   

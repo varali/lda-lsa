@@ -32,7 +32,7 @@ testmatrix <- create_matrix(testdata, language="english", removeNumbers=TRUE, st
 testmatrix
 
 ############## INIT VECTORS ##############
-iterations <- 10000
+iterations <- 1000
 mutual.info <- vector(mode = "numeric", length = iterations)
 document.count <- vector(mode = "numeric", length = 100)
 labeled.count <- vector(mode = "numeric", length = 100)
@@ -47,13 +47,17 @@ for (i in 1:100) {
 labeled.indices <- sample(100,10)
 unlabeled.indices <- c(1:100)[-labeled.indices]
 
+numTraining <- 25
+numTesting <- 100 - numTraining
+
+
 s <- 1
 
 ############## BEGIN LOOP ##############
 while (s <= iterations) {
   
   # get random sample of 50 from the 100
-  s.indices <- sample(100,50)
+  s.indices <- sample(100,numTraining)
   s.indices
   
   labeledTraining <- which(s.indices %in% labeled.indices)
@@ -172,13 +176,13 @@ while (s <= iterations) {
   rownames(jdm.testset) <- c("cur1", "cur2", "cur3", "cur4", "cur5")
   colnames(jdm.testset) <- c("lda1", "lda2", "lda3", "lda4", "lda5")
   
-  for (i in 1:10) {
+  for (i in 1:numTesting) {
     jdm.testset[s.curated.data[i],testset.resorted[i,]$lda] = jdm.testset[s.curated.data[i],testset.resorted[i,]$lda] + 1
   }
   
   for (i in 1:5) {
     for (j in 1:5) {
-      jdm.testset[i,j] = jdm.testset[i, j] / 10
+      jdm.testset[i,j] = jdm.testset[i, j] / numTesting
     }
   }
   #jdm.testset

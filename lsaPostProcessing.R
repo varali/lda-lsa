@@ -49,8 +49,11 @@ lowest50 <- head(sort(medians), 50)
 ltMed50 <- which(medians %in% lowest50)
 
 
-filesToUse <- ltMed50
+filesToUse <- ltMed75
 print(filesToUse)
+
+numTraining <- 75
+numTesting <- 100 - numTraining
 
 ############## READ IN DOCUMENTS ##############
 wd <- getwd()
@@ -170,13 +173,13 @@ for (s in 1:iterations) {
   rownames(jdm.testset) <- c("cur1", "cur2", "cur3", "cur4", "cur5")
   colnames(jdm.testset) <- c("lsa1", "lsa2", "lsa3", "lsa4", "lsa5")
   
-  for (i in 1:100) {
+  for (i in 1:numTesting) {
     jdm.testset[s.curated.data[i],testset.resorted[i,]$lsa] = jdm.testset[s.curated.data[i],testset.resorted[i,]$lsa] + 1
   }
   
   for (i in 1:5) {
     for (j in 1:5) {
-      jdm.testset[i,j] = jdm.testset[i, j] / 100
+      jdm.testset[i,j] = jdm.testset[i, j] / numTesting
     }
   }
   

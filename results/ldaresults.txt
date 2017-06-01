@@ -1,0 +1,58 @@
+
+With fixed values (numTesting, numTraining)
+And 1000 runs of miv 
+
+lda: 0.4257897
+10 pp: 0.333726
+lda: 0.43004
+10 pp: 0.490100
+
+lda: 0.47569
+25 pp: 0.701556
+
+lda: 0.5985585
+50 pp: 0.847121
+
+lda: 0.7182666
+75 pp: 0.879978
+
+lda: 0.8798404
+90 pp: 1.657542
+mutual.info[41] was miv 1.76 wooow 
+look at mutual.info[467] 
+
+
+32 in topic 1 
+54 in topic 2
+3 in topic 3
+5 in topic 4
+6 in topic 5
+
+
+
+lda diffs
+10: 0.06
+25: 0.22
+50: 0.24
+75: 0.16
+90: 0.77
+
+
+lda partial labeling
+
+lda: 0.4047228
+10 pp: 0.769370 (0.699620 w ltMed10 of 10)
+
+lda: 0.4082403
+25 pp: 0.956904
+
+lda: 0.4115085
+50 pp: 0.360928
+lda: 0.4043856
+50 pp: 0.544108 (0.803422) (0.348040)
+
+lda: 0.4728215
+75 pp: 1.017992
+
+lda: 0.6643856
+90 pp: 1.095462
